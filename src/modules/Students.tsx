@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { A4Document, DocToolbar, Field } from "@/components/common/A4Document";
-import { fmtDate, initials, inr, invoiceTotal, qrMatrix, today } from "@/utils/helpers";
+import { fmtDate, initials, inr, invoiceTotal, qrDataUrl, today } from "@/utils/helpers";
 import { BLOOD, CATEGORY } from "@/data/seed";
 import { Badge, attendanceSummary, feeSummary, useGoto } from "@/modules/shared";
 
@@ -395,12 +395,31 @@ export function TransferStudent() {
 }
 
 function Qr({ text }: { text: string }) {
-  const size = 21;
-  const cells = qrMatrix(text, size);
+  const [src, setSrc] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    setSrc("");
+    qrDataUrl(text, 160)
+      .then((url) => {
+        if (active) setSrc(url);
+      })
+      .catch(() => {
+        if (active) setSrc("");
+      });
+    return () => {
+      active = false;
+    };
+  }, [text]);
+
   return (
-    <div className="grid size-16 bg-white" style={{ gridTemplateColumns: `repeat(${size}, 1fr)` }}>
-      {cells.map((on, i) => <div key={i} style={{ background: on ? "#0f172a" : "#fff" }} />)}
-    </div>
+    src ? (
+      <img src={src} alt="Scannable student identity QR code" className="size-16 bg-white p-0.5" />
+    ) : (
+      <div className="flex size-16 items-center justify-center bg-white text-center text-[7px] text-slate-700">
+        Creating QR…
+      </div>
+    )
   );
 }
 

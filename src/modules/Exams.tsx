@@ -489,7 +489,7 @@ export function StudentResult() {
                 ["Admission No", s.admissionNo],
                 ["Class / Section", `${s.className} - ${s.section}`],
                 ["Roll Number", s.rollNo],
-                ["Attendance", `${att.present}/${att.total} (${att.percent}%)`],
+                    ["Attendance", `${att.present}/${att.total} (${att.pct}%)`],
               ].map(([l, v]) => (
                 <div key={String(l)} className="flex border-b border-dotted border-slate-400 py-0.5">
                   <span className="w-36 font-semibold">{l}</span>

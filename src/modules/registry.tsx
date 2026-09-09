@@ -40,12 +40,15 @@ import {
   ExamSchedule,
   MarksList,
   ReportCard,
+  StudentResult,
 } from "@/modules/Exams";
 import {
   BonafideCertificate,
   CharacterCertificate,
   CustomCertificate,
+  AdmissionLetter,
   FeeCertificate,
+  ExperienceCertificate,
   LeavingCertificate,
   StudyCertificate,
   TransferCertificate,
@@ -66,8 +69,9 @@ import {
   StudentReport,
   TeacherReport,
 } from "@/modules/Reports";
-import { Notices, ParentMessages } from "@/modules/Communication";
-import { BackupRestore, SchoolProfile, UserManagement } from "@/modules/Settings";
+import { Announcements, Notices, ParentMessages } from "@/modules/Communication";
+import { BackupRestore, CertificateSettings, FeeSettings, SchoolProfile, UserManagement } from "@/modules/Settings";
+import { StaffAttendance } from "@/modules/Staff";
 
 /**
  * Single source of truth mapping a sidebar slug to the screen it renders.
@@ -107,6 +111,7 @@ const ROUTES: Record<string, () => ReactNode> = {
   "exams/marks-list": () => <MarksList />,
   "exams/report-card": () => <ReportCard />,
   "exams/class-result": () => <ClassResult />,
+  "exams/student-result": () => <StudentResult />,
 
   "certificates/bonafide": () => <BonafideCertificate />,
   "certificates/transfer": () => <TransferCertificate />,
@@ -114,12 +119,15 @@ const ROUTES: Record<string, () => ReactNode> = {
   "certificates/leaving": () => <LeavingCertificate />,
   "certificates/study": () => <StudyCertificate />,
   "certificates/fee": () => <FeeCertificate />,
+  "certificates/admission-letter": () => <AdmissionLetter />,
+  "certificates/experience": () => <ExperienceCertificate />,
   "certificates/custom": () => <CustomCertificate />,
 
   teachers: () => <TeacherList />,
   "teachers/add": () => <AddTeacher />,
   "teachers/attendance": () => <TeacherAttendance />,
   staff: () => <StaffList />,
+  "staff/attendance": () => <StaffAttendance />,
   payroll: () => <Payroll />,
 
   "academics/classes": () => <ClassesSections />,
@@ -135,9 +143,12 @@ const ROUTES: Record<string, () => ReactNode> = {
   "reports/teachers": () => <TeacherReport />,
 
   notices: () => <Notices />,
+  "notices/announcements": () => <Announcements />,
   "notices/messages": () => <ParentMessages />,
 
   settings: () => <SchoolProfile />,
+  "settings/fees": () => <FeeSettings />,
+  "settings/certificates": () => <CertificateSettings />,
   "settings/users": () => <UserManagement />,
   "settings/backup": () => <BackupRestore />,
 };

@@ -114,6 +114,139 @@ export function SchoolProfile() {
   );
 }
 
+const DEFAULT_FEE_SETTINGS = {
+  dueDay: 10,
+  lateFee: 100,
+  graceDays: 3,
+  paymentModes: "Cash, UPI, Card, Bank Transfer, Cheque",
+  heads: [
+    { name: "Admission Fee", amount: 5000, frequency: "One-time" },
+    { name: "Tuition Fee", amount: 2500, frequency: "Monthly" },
+    { name: "Annual Fee", amount: 3000, frequency: "Yearly" },
+    { name: "Exam Fee", amount: 500, frequency: "Yearly" },
+  ],
+};
+
+export function FeeSettings() {
+  const { settings, saveSettings } = useApp();
+  const [form, setForm] = useState<any>(settings.feeSettings || DEFAULT_FEE_SETTINGS);
+
+  useEffect(() => setForm(settings.feeSettings || DEFAULT_FEE_SETTINGS), [settings.feeSettings]);
+
+  const update = (key: string, value: any) => setForm((f: any) => ({ ...f, [key]: value }));
+  const updateHead = (index: number, key: string, value: any) =>
+    setForm((f: any) => ({
+      ...f,
+      heads: f.heads.map((head: any, i: number) => (i === index ? { ...head, [key]: value } : head)),
+    }));
+
+  const save = () => {
+    saveSettings({
+      ...settings,
+      feeSettings: {
+        ...form,
+        dueDay: Number(form.dueDay),
+        lateFee: Number(form.lateFee),
+        graceDays: Number(form.graceDays),
+      },
+    });
+    toast.success("Fee settings saved");
+  };
+
+  return (
+    <div>
+      <PageHeader
+        title="Fee Settings"
+        subtitle="Set default fee heads, due dates and payment rules used by the fee screens."
+        actions={
+          <>
+            <Button variant="outline" onClick={() => setForm(settings.feeSettings || DEFAULT_FEE_SETTINGS)}>
+              <RotateCcw className="size-4" /> Reset
+            </Button>
+            <Button onClick={save}><Save className="size-4" /> Save Settings</Button>
+          </>
+        }
+      />
+      <div className="space-y-6">
+        <Panel title="Collection rules">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <TextField label="Due day of month" type="number" value={form.dueDay} onChange={(v) => update("dueDay", v)} />
+            <TextField label="Late fee" type="number" value={form.lateFee} onChange={(v) => update("lateFee", v)} />
+            <TextField label="Grace period (days)" type="number" value={form.graceDays} onChange={(v) => update("graceDays", v)} />
+            <TextField label="Payment modes" value={form.paymentModes} onChange={(v) => update("paymentModes", v)} />
+          </div>
+        </Panel>
+        <Panel
+          title="Default fee heads"
+          actions={
+            <Button size="sm" variant="outline" onClick={() => update("heads", [...form.heads, { name: "", amount: 0, frequency: "Monthly" }])}>
+              <Plus className="size-4" /> Add Head
+            </Button>
+          }
+        >
+          <div className="space-y-3">
+            {form.heads.map((head: any, index: number) => (
+              <div key={`${head.name}-${index}`} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-[1fr_150px_150px_auto] sm:items-end">
+                <TextField label="Fee head" value={head.name} onChange={(v) => updateHead(index, "name", v)} />
+                <TextField label="Amount" type="number" value={head.amount} onChange={(v) => updateHead(index, "amount", Number(v))} />
+                <SelectField label="Frequency" value={head.frequency} onChange={(v) => updateHead(index, "frequency", v)} options={["One-time", "Monthly", "Quarterly", "Yearly"]} />
+                <Button variant="ghost" size="icon" aria-label="Delete fee head" onClick={() => update("heads", form.heads.filter((_: any, i: number) => i !== index))}>
+                  <Trash2 className="size-4 text-destructive" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      </div>
+    </div>
+  );
+}
+
+const DEFAULT_CERTIFICATE_SETTINGS = {
+  certificatePrefix: "CERT",
+  showLogo: true,
+  defaultConduct: "Good",
+  footerNote: "This document is issued by the school for official purposes.",
+  signatureLabel: "Principal",
+  stampLabel: "School Stamp",
+};
+
+export function CertificateSettings() {
+  const { settings, saveSettings } = useApp();
+  const [form, setForm] = useState<any>(settings.certificateSettings || DEFAULT_CERTIFICATE_SETTINGS);
+  useEffect(() => setForm(settings.certificateSettings || DEFAULT_CERTIFICATE_SETTINGS), [settings.certificateSettings]);
+  const set = (key: string) => (value: any) => setForm((f: any) => ({ ...f, [key]: value }));
+  const save = () => {
+    saveSettings({ ...settings, certificateSettings: form });
+    toast.success("Certificate settings saved");
+  };
+
+  return (
+    <div>
+      <PageHeader
+        title="Certificate Settings"
+        subtitle="Manage defaults used when preparing certificates and school documents."
+        actions={<Button onClick={save}><Save className="size-4" /> Save Settings</Button>}
+      />
+      <Panel title="Document defaults">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <TextField label="Certificate number prefix" value={form.certificatePrefix} onChange={set("certificatePrefix")} />
+          <SelectField label="Default conduct" value={form.defaultConduct} onChange={set("defaultConduct")} options={["Excellent", "Very Good", "Good", "Satisfactory"]} />
+          <TextField label="Signature label" value={form.signatureLabel} onChange={set("signatureLabel")} />
+          <TextField label="Stamp label" value={form.stampLabel} onChange={set("stampLabel")} />
+          <div className="sm:col-span-2">
+            <TextField label="Footer note" value={form.footerNote} onChange={set("footerNote")} />
+          </div>
+          <label className="flex items-center gap-2 text-sm font-medium">
+            <input type="checkbox" checked={Boolean(form.showLogo)} onChange={(e) => set("showLogo")(e.target.checked)} />
+            Show school logo on generated documents
+          </label>
+        </div>
+      </Panel>
+    </div>
+  );
+}
+
 const EMPTY_USER = { name: "", username: "", email: "", password: "", role: "Admin" };
 
 export function UserManagement() {

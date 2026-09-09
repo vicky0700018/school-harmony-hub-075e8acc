@@ -45,6 +45,7 @@ type Collections = {
   subjects: AnyRow[];
   users: AnyRow[];
   salaries: AnyRow[];
+  staffAttendance: AnyRow[];
 };
 
 type User = { id: string; name: string; username: string; role: string; email: string };
@@ -89,12 +90,13 @@ function seedAll() {
   storage.set(KEYS.settings, DEFAULT_SETTINGS);
   storage.set(KEYS.users, USERS);
   storage.set(KEYS.salaries, []);
+  storage.set(KEYS.staffAttendance, []);
   storage.set(KEYS.seeded, true);
 }
 
 const EMPTY: Collections = {
   students: [], teachers: [], staff: [], invoices: [], payments: [], attendance: [],
-  exams: [], marks: [], notices: [], admissions: [], timetable: [],
+  exams: [], marks: [], notices: [], admissions: [], timetable: [], staffAttendance: [],
   classes: CLASSES, sections: SECTIONS, subjects: SUBJECTS, users: USERS, salaries: [],
 };
 
@@ -123,6 +125,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       subjects: storage.get(KEYS.subjects, SUBJECTS as AnyRow[]),
       users: storage.get(KEYS.users, USERS as AnyRow[]),
       salaries: storage.get(KEYS.salaries, [] as AnyRow[]),
+      staffAttendance: storage.get(KEYS.staffAttendance, [] as AnyRow[]),
     });
     setSettings(storage.get(KEYS.settings, DEFAULT_SETTINGS));
   }, []);
